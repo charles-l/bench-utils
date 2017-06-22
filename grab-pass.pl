@@ -17,10 +17,12 @@ sub scan_until {
         return $line if($line =~ $regex);
         print $line if($should_print);
     }
-    die("no pass found");
+    return ""
 }
 
-print scan_until qr/^\*\*\*.*$search.*\*\*\*$/, 0;
-scan_until qr/^\*\*\*.*\*\*\*$/, 1;
+until(eof $fh) {
+    print scan_until qr/^\*\*\*.*$search.*\*\*\*$/, 0;
+    scan_until qr/^\*\*\*(?:(?!$search).)*\*\*\*$/, 1;
+}
 
 close($fh);

@@ -8,7 +8,7 @@ end
 abort "ensure cset is in $PATH" unless in_path? "cset"
 abort "ensure llvm-lit is in $PATH" unless in_path? "cset"
 
-CSET="sudo #{`which cset`}"
+CSET="sudo #{`which cset`}".strip
 
 $lto_benchmarks     = 'build-lto/MultiSource/Benchmarks'
 $thinlto_benchmarks = 'build-thinlto/MultiSource/Benchmarks'
@@ -20,7 +20,9 @@ end
 def compare(test)
     def bench(t, build_dir, runs = 5)
         a = []
-        runs.times do
+        puts "RUNNING TEST #{runs} TIMES (command: cd #{build_dir}/ && #{CSET} shield --exec llvm-lit #{t} | grep exec_time)"
+        runs.times do |i|
+            puts "RUN #{i}"
             k = `cd #{build_dir}/ && #{CSET} shield --exec llvm-lit #{t} | grep exec_time`&.split(':')[1]&.strip.to_f
             a << k if k
         end
